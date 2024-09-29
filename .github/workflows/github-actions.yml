@@ -7,7 +7,11 @@ on:
             - '*'
 jobs:
     full-test:
-        container: cuaesd/aesd-autotest:24-assignment7-buildroot
+        container:
+          image: cuaesd/aesd-autotest:24-assignment7-buildroot
+          volumes:
+            - /home/domenic/.cache/br2/ccache:/br2/ccache
+            - /home/domenic/.cache/br2/dl:/br2/dl
         runs-on: self-hosted
         timeout-minutes: 120
         steps:
@@ -19,6 +23,8 @@ jobs:
                 ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
           - name: Run full test
             env:
+              BR2_CCACHE_DIR: /br2/ccache
+              BR2_DL_DIR: /br2/dl
               GIT_SSH_COMMAND: "ssh -o StrictHostKeyChecking=no"
             run: ./full-test.sh
           - name: Cleanup
